@@ -16,7 +16,11 @@ examples.txt
 !/log/.keep
 !/tmp/.keep
 
+/elm-stuff
 /node_modules
 /yarn-error.log
 
 .byebug_history
+/public/packs
+/elm-stuff
+/node_modules
