@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, label, ul, li, h1, h3, text, button, input, select, option)
-import Html.Events exposing (onInput)
+import Html exposing (Html, div, label, ul, li, h1, h3, text, button, input, select, option, button)
+import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (id, style, name, for, type_, value, placeholder)
 
 -- TYPES
@@ -87,9 +87,10 @@ view model =
       , li[]
           [ label [ for "artists" ]
             [text "Artists:"]
-        , input [ name "artists", type_ "text", onInput SetArtists ] []
+        , input [ name "artists", type_ "text", placeholder "artist1, artist2, ...", onInput SetArtists ] []
         ]
       ]
+      , button [ onClick AddRecord ] [ text "Add" ]
     ]
 
 
@@ -99,6 +100,7 @@ type Message
   = SetTitle String
   | SetAlbumName String
   | SetArtists String
+  | AddRecord
 
 -- UPDATE
 
@@ -130,6 +132,8 @@ update message model =
     SetArtists newArtists ->
       ({ model | record = 
         setAlbum (setArtists newArtists model.record.album) model.record }, Cmd.none )
+    AddRecord ->
+      (model, Cmd.none)
 
 
 -- HTTP
