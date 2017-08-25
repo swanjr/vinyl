@@ -48,7 +48,9 @@ type alias Model =
 type Message
   = SetSides String
   | SetTitle String
+  | SetAlbumType String
   | SetArtist String
+  | SetCondition String
   | AddRecord
 
 -- UPDATE
@@ -61,9 +63,15 @@ update message model =
     SetTitle newTitle ->
       ({ model | record = 
         setAlbum (setAlbumTitle newTitle model.record.album) model.record }, Cmd.none )
+    SetAlbumType newAlbumType ->
+      ({ model | record = 
+        setAlbum (setAlbumType newAlbumType model.record.album) model.record }, Cmd.none )
     SetArtist newArtist ->
       ({ model | record = 
         setAlbum (setArtist newArtist model.record.album) model.record }, Cmd.none )
+    SetCondition newCondition ->
+      ({ model | record = 
+        setCondition newCondition model.record }, Cmd.none )
     AddRecord ->
       (model, Cmd.none)
 
@@ -71,13 +79,21 @@ setSides: String -> Record -> Record
 setSides newSides record= 
   { record | sides = newSides }
 
+setCondition: String -> Record -> Record
+setCondition newCondition record= 
+  { record | condition = newCondition }
+
 setAlbum: Album -> Record -> Record
 setAlbum newAlbum record = 
   { record | album = newAlbum }
 
 setAlbumTitle: String -> Album -> Album
-setAlbumTitle newTitle album = 
+setAlbumTitle newTitle album =
   { album | title = newTitle }
+
+setAlbumType: String -> Album -> Album
+setAlbumType newAlbumType album = 
+  { album | albumType = newAlbumType }
 
 setArtist: String -> Album -> Album
 setArtist newArtist album = 
@@ -117,7 +133,7 @@ view model =
       , li[]
           [ label [ for "album_type" ]
             [text "Type of Album:"]
-          , select [ name "album_type" ] 
+          , select [ name "album_type", onInput SetAlbumType ] 
             (List.map stringOption ("" :: albumTypes))
         ]
       , li[]
@@ -133,7 +149,7 @@ view model =
       , li[]
           [ label [ for "condition" ]
             [text "Condition:"]
-          , select [ name "condition" ]
+          , select [ name "condition", onInput SetCondition]
             (List.map stringOption ("" :: conditions))
         ]
       ]
