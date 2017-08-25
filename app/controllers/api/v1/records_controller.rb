@@ -1,7 +1,4 @@
 class Api::V1::RecordsController < ApplicationController
-  def index
-
-  end
   
   def create
     record = AddRecordService.new(params.to_unsafe_h()).perform   
@@ -14,11 +11,4 @@ class Api::V1::RecordsController < ApplicationController
     end
   end
 
-  def update
-
-  end
-
-  def delete
-
-  end
 end

@@ -20,12 +20,16 @@ ActiveRecord::Schema.define(version: 20170823171419) do
     t.string "album_type", null: false
     t.string "released"
     t.string "artist"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["title"], name: "index_albums_on_title"
   end
 
   create_table "records", force: :cascade do |t|
     t.string "condition", null: false
     t.string "sides"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "album_id"
     t.index ["album_id"], name: "index_records_on_album_id"
   end

@@ -1,8 +1,8 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, label, ul, li, h1, h3, text, button, input, select, option, button)
+import Html exposing (Html, div, label, p, a, ul, li, h1, h3, text, button, input, select, option, button)
 import Html.Events exposing (onInput, onClick)
-import Html.Attributes exposing (id, style, name, for, type_, value, placeholder)
+import Html.Attributes exposing (id, style, href, name, for, type_, value, placeholder)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -14,8 +14,10 @@ init =
   (Model nullRecord "", Cmd.none)
 
 -- MODEL
-
+conditions : List String
 conditions = ["M", "NM", "VG+", "VG", "G+", "G", "F", "P"]
+
+albumTypes : List String
 albumTypes = ["Album", "Single", "Compilation"]  
 
 type alias Record = 
@@ -174,7 +176,7 @@ view model =
     , h3 []
       [text "Add new record"]
 
-    , ul []
+    , ul [ style [("list-style", "none")]]
       [ li[]
           [ label [ for "album_title" ]
             [text "Album Title:"]
@@ -209,6 +211,11 @@ view model =
         ]
       ]
       , button [ onClick AddRecord ] [ text "Add" ]
+      , p []
+        [
+          a [ href "/records"]
+            [text "Back"]
+        ]
     ]
 
 -- MAIN

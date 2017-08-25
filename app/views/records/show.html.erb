@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Sides:</strong>
+  <%= @record.sides %>
+</p>
+
+<p>
+  <strong>Condition:</strong>
+  <%= @record.condition %>
+</p>
+
+<%= link_to 'Edit', edit_record_path(@record) %> |
+<%= link_to 'Back', records_path %>

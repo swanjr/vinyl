@@ -3,6 +3,7 @@ class CreateRecords < ActiveRecord::Migration[5.1]
     create_table :records do |t|
       t.string :condition, null: false 
       t.string :sides
+      t.timestamps
     end
   end
 end
