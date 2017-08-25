@@ -3,11 +3,19 @@ module Main exposing (..)
 import Html exposing (Html, div, label, ul, li, h1, h3, text, button, input, select, option, button)
 import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (id, style, name, for, type_, value, placeholder)
+import Http exposing (..)
 
--- TYPES
+-- INIT
 
---type Condition = M | NM | VG Plus | VG | G Plus | G | F | P 
---type AlbumType = Album | Single | Compilation
+init : (Model, Cmd Message)
+init =
+  let 
+    album = 
+      Album "" "" "" ""
+    record = 
+      Record "" "" album
+  in
+   (Model record, Cmd.none)
 
 -- MODEL
 
@@ -34,21 +42,60 @@ type alias Model =
     record: Record
   }
 
--- INIT
+
+-- MESSAGE
+
+type Message
+  = SetTitle String
+  | SetAlbumName String
+  | SetArtists String
+  | AddRecord
+
+-- UPDATE
+update : Message -> Model -> (Model, Cmd Message)
+update message model =
+  case message of
+    SetTitle newTitle ->
+      ({ model | record = 
+        setTitle newTitle model.record }, Cmd.none )
+    SetAlbumName newName ->
+      ({ model | record = 
+        setAlbum (setAlbumName newName model.record.album) model.record }, Cmd.none )
+    SetArtists newArtists ->
+      ({ model | record = 
+        setAlbum (setArtists newArtists model.record.album) model.record }, Cmd.none )
+    AddRecord ->
+      (model, Cmd.none)
+
+setTitle: String -> Record -> Record
+setTitle newTitle record= 
+  { record | title = newTitle }
+
+setAlbum: Album -> Record -> Record
+setAlbum newAlbum record = 
+  { record | album = newAlbum }
+
+setAlbumName: String -> Album -> Album
+setAlbumName newName album = 
+  { album | name = newName }
+
+setArtists: String -> Album -> Album
+setArtists newArtists album = 
+  { album | artists = newArtists }
 
 
-init : (Model, Cmd Message)
-init =
-  let 
-    album = 
-      Album "" "" "" ""
-    record = 
-      Record "" "" album
-  in
-   (Model record, Cmd.none)
+-- HTTP
+
+
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Message
+subscriptions model =
+  Sub.none
 
 -- VIEW
 
+stringOption : String -> Html Message
 stringOption strValue =
   option [ value strValue ][ text strValue ]
 
@@ -92,58 +139,6 @@ view model =
       ]
       , button [ onClick AddRecord ] [ text "Add" ]
     ]
-
-
--- MESSAGE
-
-type Message
-  = SetTitle String
-  | SetAlbumName String
-  | SetArtists String
-  | AddRecord
-
--- UPDATE
-
-setTitle: String -> Record -> Record
-setTitle newTitle record= 
-  { record | title = newTitle }
-
-setAlbum: Album -> Record -> Record
-setAlbum newAlbum record = 
-  { record | album = newAlbum }
-
-setAlbumName: String -> Album -> Album
-setAlbumName newName album = 
-  { album | name = newName }
-
-setArtists: String -> Album -> Album
-setArtists newArtists album = 
-  { album | artists = newArtists }
-
-update : Message -> Model -> (Model, Cmd Message)
-update message model =
-  case message of
-    SetTitle newTitle ->
-      ({ model | record = 
-        setTitle newTitle model.record }, Cmd.none )
-    SetAlbumName newName ->
-      ({ model | record = 
-        setAlbum (setAlbumName newName model.record.album) model.record }, Cmd.none )
-    SetArtists newArtists ->
-      ({ model | record = 
-        setAlbum (setArtists newArtists model.record.album) model.record }, Cmd.none )
-    AddRecord ->
-      (model, Cmd.none)
-
-
--- HTTP
-
-
--- SUBSCRIPTIONS
-
-subscriptions : Model -> Sub Message
-subscriptions model =
-  Sub.none
 
 -- MAIN
 
