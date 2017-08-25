@@ -24,15 +24,15 @@ albumTypes = ["Album", "Single", "Compilation"]
 
 type alias Record = 
   {
-    title: String,
+    sides: String,
     condition: String,
     album: Album
   }
 
 type alias Album =
   {
-    name: String,
-    artists: String,
+    title: String,
+    artist: String,
     albumType: String,
     released: String
   }
@@ -46,42 +46,42 @@ type alias Model =
 -- MESSAGE
 
 type Message
-  = SetTitle String
-  | SetAlbumName String
-  | SetArtists String
+  = SetSides String
+  | SetTitle String
+  | SetArtist String
   | AddRecord
 
 -- UPDATE
 update : Message -> Model -> (Model, Cmd Message)
 update message model =
   case message of
+    SetSides newSides ->
+      ({ model | record = 
+        setSides newSides model.record }, Cmd.none )
     SetTitle newTitle ->
       ({ model | record = 
-        setTitle newTitle model.record }, Cmd.none )
-    SetAlbumName newName ->
+        setAlbum (setAlbumTitle newTitle model.record.album) model.record }, Cmd.none )
+    SetArtist newArtist ->
       ({ model | record = 
-        setAlbum (setAlbumName newName model.record.album) model.record }, Cmd.none )
-    SetArtists newArtists ->
-      ({ model | record = 
-        setAlbum (setArtists newArtists model.record.album) model.record }, Cmd.none )
+        setAlbum (setArtist newArtist model.record.album) model.record }, Cmd.none )
     AddRecord ->
       (model, Cmd.none)
 
-setTitle: String -> Record -> Record
-setTitle newTitle record= 
-  { record | title = newTitle }
+setSides: String -> Record -> Record
+setSides newSides record= 
+  { record | sides = newSides }
 
 setAlbum: Album -> Record -> Record
 setAlbum newAlbum record = 
   { record | album = newAlbum }
 
-setAlbumName: String -> Album -> Album
-setAlbumName newName album = 
-  { album | name = newName }
+setAlbumTitle: String -> Album -> Album
+setAlbumTitle newTitle album = 
+  { album | title = newTitle }
 
-setArtists: String -> Album -> Album
-setArtists newArtists album = 
-  { album | artists = newArtists }
+setArtist: String -> Album -> Album
+setArtist newArtist album = 
+  { album | artist = newArtist }
 
 
 -- HTTP
@@ -109,21 +109,10 @@ view model =
       [text "Add new record"]
 
     , ul []
-      [ li []
-        [ label [ for "title" ]
-          [text "Title:"]
-        , input [ name "title", type_ "text", onInput SetTitle ] []
-      ]
-      , li[]
-          [ label [ for "condition" ]
-            [text "Condition:"]
-          , select [ name "condition" ]
-            (List.map stringOption ("" :: conditions))
-        ]
-      , li[]
-          [ label [ for "album_name" ]
-            [text "Album Name:"]
-        , input [ name "album_name", type_ "text", onInput SetAlbumName ] []
+      [ li[]
+          [ label [ for "album_title" ]
+            [text "Album Title:"]
+        , input [ name "album_title", type_ "text", onInput SetTitle ] []
         ]
       , li[]
           [ label [ for "album_type" ]
@@ -132,9 +121,20 @@ view model =
             (List.map stringOption ("" :: albumTypes))
         ]
       , li[]
-          [ label [ for "artists" ]
-            [text "Artists:"]
-        , input [ name "artists", type_ "text", placeholder "artist1, artist2, ...", onInput SetArtists ] []
+          [ label [ for "artist" ]
+            [text "Artist:"]
+        , input [ name "artist", type_ "text", onInput SetArtist ] []
+        ]
+      , li []
+          [ label [ for "sides" ]
+            [text "Sides:"]
+          , input [ name "sides", type_ "text", onInput SetSides ] []
+        ]
+      , li[]
+          [ label [ for "condition" ]
+            [text "Condition:"]
+          , select [ name "condition" ]
+            (List.map stringOption ("" :: conditions))
         ]
       ]
       , button [ onClick AddRecord ] [ text "Add" ]
