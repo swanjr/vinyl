@@ -1,7 +1,3 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
-
-  def index
-
-  end
+  protect_from_forgery unless: -> { request.format.json? }
 end

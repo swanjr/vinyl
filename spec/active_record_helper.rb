@@ -6,6 +6,7 @@ require 'erb'
 require 'yaml'
 require 'active_record'
 require 'shoulda-matchers'
+require 'factory_girl'
 
 require 'models/application_record'
 
@@ -22,6 +23,10 @@ ActiveRecord::Base.establish_connection(connection_info)
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+  config.before(:suite) do
+    FactoryGirl.find_definitions if FactoryGirl.factories.count == 0
+  end
+
   # Add transactions without rails
   config.around do |example|
     ActiveRecord::Base.transaction do
