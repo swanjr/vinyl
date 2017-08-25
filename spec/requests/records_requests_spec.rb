@@ -15,7 +15,6 @@ RSpec.describe "Records API V1" do
         post api_v1_records_path, params: record_attrs.to_json, headers: headers
 
         expect(response).to have_status(:created)
-        expect(json['id']).not_to be_nil
       end
     end
 

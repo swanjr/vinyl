@@ -7,7 +7,7 @@ class Api::V1::RecordsController < ApplicationController
     record = AddRecordService.new(params.to_unsafe_h()).perform   
 
     if record.album.errors.empty?
-      render json: record.as_json, status: :created
+      render json: {errors: ""}, status: :created
     else
       errors = record.album.errors.full_messages
       render json: {errors: errors}, status: :unprocessable_entity 

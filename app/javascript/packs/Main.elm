@@ -3,23 +3,19 @@ module Main exposing (..)
 import Html exposing (Html, div, label, ul, li, h1, h3, text, button, input, select, option, button)
 import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (id, style, name, for, type_, value, placeholder)
-import Http exposing (..)
+import Http
+import Json.Decode as Decode
+import Json.Encode as Encode
 
 -- INIT
 
 init : (Model, Cmd Message)
 init =
-  let 
-    album = 
-      Album "" "" "" ""
-    record = 
-      Record "" "" album
-  in
-   (Model record, Cmd.none)
+  (Model nullRecord "", Cmd.none)
 
 -- MODEL
 
-conditions = ["M", "MN", "VG+", "VG", "G+", "G", "F", "P"]
+conditions = ["M", "NM", "VG+", "VG", "G+", "G", "F", "P"]
 albumTypes = ["Album", "Single", "Compilation"]  
 
 type alias Record = 
@@ -39,9 +35,17 @@ type alias Album =
 
 type alias Model = 
   {
-    record: Record
-  }
+    record: Record,
+    message: String
+}
 
+nullRecord: Record
+nullRecord = 
+  let 
+    album = 
+      Album "" "" "" ""
+  in
+    Record "" "" album
 
 -- MESSAGE
 
@@ -50,8 +54,10 @@ type Message
   | SetTitle String
   | SetAlbumType String
   | SetArtist String
+  | SetReleased String
   | SetCondition String
   | AddRecord
+  | AddRecordComplete (Result Http.Error String)
 
 -- UPDATE
 update : Message -> Model -> (Model, Cmd Message)
@@ -66,6 +72,9 @@ update message model =
     SetAlbumType newAlbumType ->
       ({ model | record = 
         setAlbum (setAlbumType newAlbumType model.record.album) model.record }, Cmd.none )
+    SetReleased newReleaseDate ->
+      ({ model | record = 
+        setAlbum (setReleased newReleaseDate model.record.album) model.record }, Cmd.none )
     SetArtist newArtist ->
       ({ model | record = 
         setAlbum (setArtist newArtist model.record.album) model.record }, Cmd.none )
@@ -73,7 +82,9 @@ update message model =
       ({ model | record = 
         setCondition newCondition model.record }, Cmd.none )
     AddRecord ->
-      (model, Cmd.none)
+      ( model, saveRecord model.record )
+    AddRecordComplete result ->
+      addRecordComplete model result
 
 setSides: String -> Record -> Record
 setSides newSides record= 
@@ -95,13 +106,50 @@ setAlbumType: String -> Album -> Album
 setAlbumType newAlbumType album = 
   { album | albumType = newAlbumType }
 
+setReleased: String -> Album -> Album
+setReleased newReleaseDate album = 
+  { album | released = newReleaseDate }
+
 setArtist: String -> Album -> Album
 setArtist newArtist album = 
   { album | artist = newArtist }
 
-
 -- HTTP
 
+saveRecord: Record -> Cmd Message
+saveRecord record = 
+  Http.send AddRecordComplete (saveRecordRequest record)
+
+saveRecordRequest: Record -> Http.Request (String)
+saveRecordRequest record = 
+  Http.post "http://localhost:3000/api/v1/records" (Http.jsonBody (recordEncoder record)) recordDecoder 
+
+recordEncoder: Record -> Encode.Value
+recordEncoder record = 
+  Encode.object
+    [ ("sides", Encode.string record.sides )
+    , ("condition", Encode.string record.condition )
+    , ("album", Encode.object
+      [ ("title", Encode.string record.album.title )
+      , ("album_type", Encode.string record.album.albumType )
+      , ("released", Encode.string record.album.released )
+      , ("artist", Encode.string record.album.artist )
+      ] )
+    ]
+
+addRecordComplete: Model -> Result Http.Error String -> ( Model, Cmd Message )
+addRecordComplete model result =
+  case result of
+    Ok _ ->
+      ( { model | record = nullRecord, message = "Added successfully" }, Cmd.none )
+
+    Err error ->
+      Debug.log (toString error)
+      ( { model | message = "Invalid record data" }, Cmd.none ) 
+
+recordDecoder: Decode.Decoder String
+recordDecoder =
+  Decode.field "errors" Decode.string
 
 -- SUBSCRIPTIONS
 
@@ -120,6 +168,8 @@ view model =
   div [id "body", style [("justify-content", "center")]]
     [ h1 [style [("display", "flex"), ("justify-content", "center")]]
       [text "Welcome to Vinyl"]
+    , div [id "notifications", style [("display", "flex")]]
+      [text model.message]
 
     , h3 []
       [text "Add new record"]
@@ -140,6 +190,11 @@ view model =
           [ label [ for "artist" ]
             [text "Artist:"]
         , input [ name "artist", type_ "text", onInput SetArtist ] []
+        ]
+      , li[]
+          [ label [ for "released" ]
+            [text "Released:"]
+        , input [ name "released", type_ "text", onInput SetReleased ] []
         ]
       , li []
           [ label [ for "sides" ]

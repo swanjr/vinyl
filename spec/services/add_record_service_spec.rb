@@ -22,7 +22,7 @@ RSpec.describe AddRecordService do
 
     it "creates a new album if one does not exist" do
       parameters = {
-        sides: "3,4", condition: 'P', album: { "title": "Best Hits", "album_type": "compilation"}}
+        sides: "3,4", condition: 'P', album: { "title": "Best Hits", "album_type": "Compilation"}}
       record = described_class.new(parameters).perform
 
       expect(record.album.id).to_not be_nil
@@ -30,7 +30,7 @@ RSpec.describe AddRecordService do
 
     it "creates a new record" do
       parameters = {
-        sides: "3,4", condition: 'P', album: { "title": "Best Hits", "album_type": "compilation"}}
+        sides: "3,4", condition: 'P', album: { "title": "Best Hits", "album_type": "Compilation"}}
       record = described_class.new(parameters).perform
 
       expect(record.id).to_not be_nil

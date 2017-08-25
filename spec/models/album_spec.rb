@@ -14,6 +14,6 @@ RSpec.describe Album, type: :model do
   describe "validations" do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_inclusion_of(:album_type).
-         in_array(['album', 'single', 'compilation']) }
+         in_array(['Album', 'Single', 'Compilation']) }
   end
 end
