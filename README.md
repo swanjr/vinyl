@@ -22,8 +22,9 @@ Main points of interest
 8. Run 'brew services start postgresql' to start the Postgres database.
 9. Run 'rake db:setup'
 10. Run 'rails s' to start the Puma.
-11. Run 'bin/webpack-dev-server' to start the Webpack server to run Elm.
-12. In a browser, navigate to http://localhost:3000. You should see the index page for records.
+11. Run 'yarn' to trigger the compilation of the Elm modules. 
+12. Run 'bin/webpack-dev-server' to start the Webpack server to run Elm.
+13. In a browser, navigate to http://localhost:3000. You should see the index page for records.
 
 ## To run the specs
 1. Make sure steps 1 - 6 above are complete.
