@@ -1,15 +1,15 @@
 # Welcome to Vinyl
 
 Vinyl is a web application for managing simple record metadata for a record collection.  
-It is also a proof of concept of using the new Rails 5.1.3 integration with Elm 0.18. Most of the application crud functions were generated using rails scaffold. The RecordController new functionality was then replaced with a Elm frontend application form that communicates with a Rails API backend controller. During the development of this slice I also incorporated parts of my personal development process to give you a feel how I like to code, configure rspec, etc. 
+It is also a proof of concept of using the new Rails 5.1.3 integration with Elm 0.18. Most of the application crud functions were generated using rails scaffold. The RecordController new functionality was then replaced with a Elm frontend application form that communicates with a Rails API backend controller.
 
 Main points of interest
 * app/javascript/packs/Mail.elm - Client-side Elm app for created a new record.
 * app/api/v1/records_controller.rb - Rest API controller for creating a new record. Used by the Elm app.
 * app/services/add_record_service.rb - Business logic related to creating a new record and album. If I had time, this was also where I was going to trigger a job to lookup record metadata from Spotify's API in the background: https://developer.spotify.com/web-api/endpoint-reference/.
 * app/views/layouts/elm_layout.html.erb - Layout that loads the Elm app.
-* spec/active_record_helper.rb - Spec helper that loads only ActiveRecord related classes. Allows testing of significantly more classes without loading all of rails.
-* spec/requests/records_requests_spec.rb - Integration testing of Rest API RecordController. With this controller specs for API controllers are redundant.
+* spec/active_record_helper.rb - Spec helper that loads only ActiveRecord related classes. Allows testing of significantly more classes without loading all of rails, which allows for very quick execution of these specs when running them individually.
+* spec/requests/records_requests_spec.rb - Integration testing of Rest API RecordController. With this, controller specs for API controllers are redundant, IMO.
 
 ## To run the application locally in development mode
 1. Unpackage the zip to a location of your choosing. Navigate into the vinyl folder. 
@@ -30,7 +30,3 @@ Main points of interest
 1. Make sure steps 1 - 6 above are complete.
 2. Run 'rake db:migrate RAILS_ENV=test'. Just in case it needs to be done for the test database yet.
 3. Run 'rspec'.
-
-## Additional Notes
-* While I finished a vertical slice of the Elm and Rails REST API architecture, there is still room for improvement. I typically like to refactor my code once or twice but I didn't have time. Admittedly, I underestimated how long the Elm portion was going to take me. I have only experimented in doing simple forms before this. Anyway, I hope you find it interesting.
-* Also, in a production app, the Main.elm file can be broken up in to multiple modules to reduce Main.elm's size. 
